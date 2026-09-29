@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ KPI 6 Trục Nhiệm Vụ - Chuẩn Mẫu Số 02</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS (bản xlsx-js-style) cho Import/Export Excel — hỗ trợ ghi định dạng font/viền/căn lề khi xuất file -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a4d2e;
+            --secondary-color: #2e7d32;
+            --light-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #1a4d2e 0%, #2e7d32 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 2px solid #eef2f5;
+            font-weight: 700;
+            color: var(--primary-color);
+            padding: 14px 18px;
+        }
+        .nav-tabs .nav-link {
+            font-weight: 600;
+            color: #495057;
+            border: none;
+            padding: 12px 18px;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background: transparent;
+        }
+        .table-custom th {
+            background-color: #eef4ed;
+            color: #1a4d2e;
+            font-size: 0.85rem;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .table-custom td {
+            vertical-align: middle;
+            font-size: 0.88rem;
+        }
+        .axis-header-row {
+            background-color: #d1e7dd !important;
+            color: #0f5132;
+            font-weight: 700;
+        }
+        .axis-score-badge {
+            background-color: #1a4d2e;
+            color: #ffffff;
+            font-size: 0.88rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .kpi-score-card {
+            background: #ffffff;
+            border-left: 5px solid #1a4d2e;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .kpi-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1a4d2e;
+        }
+        .kpi-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .final-score-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #81c784;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+        .input-sm-custom {
+            padding: 3px 6px;
+            font-size: 0.85rem;
+        }
+        .header-parent-plan {
+            background-color: #e2ece9 !important;
+            color: #1a4d2e;
+            font-weight: 700;
+        }
+        .header-parent-actual {
+            background-color: #d1e7dd !important;
+            color: #0f5132;
+            font-weight: 700;
+        }
+        .footer-source {
+            font-style: italic;
+            color: #6c757d;
+            font-size: 0.85rem;
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-banner">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="fa-solid fa-calculator me-2"></i>CÔNG CỤ ĐÁNH GIÁ KPI CÔNG CHỨC / VIÊN CHỨC LÃNH ĐẠO</h4>
+                <p class="mb-0 text-light opacity-75">Tương thích chuẩn Mẫu số 02  (Sheet danhmuc & chamdiem) — Công thức đối chiếu đúng theo file Excel gốc</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+                <input type="text" id="inputHoTen" class="form-control form-control-sm" style="width:150px" placeholder="Họ và tên">
+                <input type="text" id="inputChucVu" class="form-control form-control-sm" style="width:150px" placeholder="Chức vụ">
+                <input type="text" id="inputDonVi" class="form-control form-control-sm" style="width:170px" placeholder="Đơn vị công tác">
+                <input type="text" id="inputKyDanhGia" class="form-control form-control-sm" style="width:130px" value="Quý III năm 2026" placeholder="Kỳ đánh giá">
+                <button class="btn btn-outline-light btn-sm" onclick="loadAISangSampleData()"><i class="fa-solid fa-rotate-left me-1"></i> Tải Dữ Liệu Mẫu 02</button>
+                <button class="btn btn-light text-success fw-bold btn-sm" onclick="exportAllSheetsMau02()"><i class="fa-solid fa-file-excel me-1"></i> Xuất Báo Cáo Excel (Chuẩn Mẫu 02)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4">
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-3" id="kpiTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab"><i class="fa-solid fa-list-check me-2"></i>1. Bảng Danh Mục Công Việc (Sheet danhmuc)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab"><i class="fa-solid fa-pen-to-square me-2"></i>2. Thực Tế Triển Khai & Chấm Điểm 6 Trục (Sheet chamdiem)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab"><i class="fa-solid fa-chart-pie me-2"></i>3. Tổng Hợp & Kết Quả Điểm Tổng (6 Trục + Tiêu Chí Chung)</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="kpiTabContent">
+        <!-- TAB 1: DANH MỤC CÔNG VIỆC -->
+        <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-table me-2"></i>DANH MỤC CÔNG VIỆC CÁ NHÂN ĐĂNG KÝ THEO 6 TRỤC (Sheet: danhmuc)</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-success fw-bold" onclick="downloadTemplateDanhMuc()"><i class="fa-solid fa-file-arrow-down me-1"></i> Tải Mẫu Danh Mục Excel (danhmuc)</button>
+                        <input type="file" id="fileImportExcel" accept=".xlsx, .xls" class="d-none" onchange="importExcelFile(event)">
+                        <button class="btn btn-sm btn-primary fw-bold" onclick="document.getElementById('fileImportExcel').click()"><i class="fa-solid fa-file-import me-1"></i> Đẩy File Excel Để Nạp Dữ Liệu</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-custom mb-0" id="tableTab1">
+                            <thead>
+                                <tr>
+                                    <th style="width: 75px;">Mã CV</th>
+                                    <th style="width: 45px;">TT</th>
+                                    <th>Nhiệm vụ theo Quý</th>
+                                    <th style="width: 140px;">Cấp trình</th>
+                                    <th>Độ khó, mới, phức tạp, phạm vi tác động</th>
+                                    <th style="width: 110px;">Sản phẩm</th>
+                                    <th style="width: 70px;">Số lượng</th>
+                                    <th style="width: 110px;">Tiến độ</th>
+                                    <th style="width: 100px;">Ghi chú</th>
+                                    <th style="width: 90px;">Điểm chấm</th>
+                                    <th style="width: 85px;">Hệ số QĐ</th>
+                                    <th style="width: 50px;">Xóa</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyTab1">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: THỰC TẾ TRIỂN KHAI VÀ CHẤM ĐIỂM -->
+        <div class="tab-pane fade" id="tab2" role="tabpanel">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-sliders me-2"></i>CHẤM ĐIỂM THỰC TẾ TRIỂN KHAI THEO 4 YẾU TỐ (Sheet: chamdiem)</span>
+                    <span class="text-muted fs-7"><i class="fa-solid fa-circle-info me-1"></i> "SL Quy đổi" = Hệ số quy đổi (trọng số công việc); Quy đổi từng tiêu chí = % Thực tế hoàn thành × SL Quy đổi — đúng theo công thức bản gốc Mẫu 02</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-custom mb-0" id="tableTab2">
+                            <thead>
+                                <tr>
+                                    <th rowspan="3" style="width: 75px;">Mã CV</th>
+                                    <th rowspan="3" style="width: 40px;">TT</th>
+                                    <th colspan="6" class="header-parent-plan text-uppercase">NHIỆM VỤ ĐỀ RA KẾ HOẠCH</th>
+                                    <th colspan="8" class="header-parent-actual text-uppercase">THỰC TẾ TRIỂN KHAI VÀ CHẤM ĐIỂM 4 YẾU TỐ</th>
+                                </tr>
+                                <tr>
+                                    <th rowspan="2">Nhiệm vụ</th>
+                                    <th rowspan="2" style="width: 90px;">Sản phẩm</th>
+                                    <th rowspan="2" style="width: 50px;">Số lượng</th>
+                                    <th rowspan="2" style="width: 90px;">Tiến độ</th>
+                                    <th rowspan="2" style="width: 60px;">Hệ số QĐ</th>
+                                    <th rowspan="2" style="width: 65px;">SL Quy đổi</th>
+
+                                    <th colspan="2" class="bg-primary-subtle">A. Số lượng</th>
+                                    <th colspan="2" class="bg-success-subtle">B. Chất lượng</th>
+                                    <th colspan="2" class="bg-warning-subtle">C. Tiến độ</th>
+                                    <th colspan="2" class="bg-info-subtle">D. Lãnh đạo</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 65px;">Thực tế</th>
+                                    <th style="width: 65px;">Quy đổi</th>
+                                    <th style="width: 65px;">Thực tế</th>
+                                    <th style="width: 65px;">Quy đổi</th>
+                                    <th style="width: 65px;">Thực tế</th>
+                                    <th style="width: 65px;">Quy đổi</th>
+                                    <th style="width: 65px;">Thực tế</th>
+                                    <th style="width: 65px;">Quy đổi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyTab2">
+                                <!-- Rendered dynamically with Axis Scores -->
+                            </tbody>
+                            <tfoot id="tfootTab2" class="fw-bold bg-light">
+                                <!-- Overall Grand Totals -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: TỔNG HỢP & KẾT QUẢ CẢ NĂM/QUÝ -->
+        <div class="tab-pane fade" id="tab3" role="tabpanel">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-list-ol me-2"></i>BẢNG TỔNG HỢP ĐIỂM ĐẠT ĐƯỢC 6 TRỤC (TỐI ĐA 70 ĐIỂM)
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Trục đánh giá nhiệm vụ (Theo Quy định 366)</th>
+                                        <th class="text-center" style="width: 90px;">Mức trần</th>
+                                        <th class="text-center" style="width: 110px;">Tỷ lệ KPI (%)</th>
+                                        <th class="text-center" style="width: 130px;">Điểm đạt thực tế</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyTab3Summary">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                                <tfoot class="fw-bold bg-light">
+                                    <tr>
+                                        <td>TỔNG ĐIỂM THỰC HIỆN NHIỆM VỤ (6 TRỤC)</td>
+                                        <td class="text-center text-danger">70.00</td>
+                                        <td class="text-center text-primary" id="valSumKPIPercent">0.00%</td>
+                                        <td class="text-center text-success fs-6" id="valSumTaskScore">0.00</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <i class="fa-solid fa-trophy me-2"></i>KẾT QUẢ ĐÁNH GIÁ TỔNG HỢP CUỐI CÙNG (THANG ĐIỂM 100)
+                        </div>
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div class="bg-light p-3 border rounded mb-3">
+                                <label class="fw-bold text-dark fs-7 mb-1"><i class="fa-solid fa-user-shield me-1 text-primary"></i>Điểm Tiêu chí chung (Tối đa 30 điểm):</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.5" min="0" max="30" id="inputGeneralScore" class="form-control text-center fw-bold text-primary" value="30" onchange="calculateKPI()">
+                                    <span class="input-group-text fw-bold">/ 30 điểm</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-around mb-3">
+                                <div class="kpi-score-card w-45">
+                                    <div class="kpi-label">Điểm Tiêu Chí Chung</div>
+                                    <div class="kpi-value text-primary" id="cardGeneralScore">30.00</div>
+                                </div>
+                                <div class="kpi-score-card w-45">
+                                    <div class="kpi-label">Điểm 6 Trục Nhiệm Vụ</div>
+                                    <div class="kpi-value text-success" id="cardTaskScore">0.00</div>
+                                </div>
+                            </div>
+
+                            <div class="final-score-box w-100 mb-3">
+                                <div class="text-uppercase fw-bold text-success fs-7 mb-1">TỔNG ĐIỂM TỔNG CỘNG HOÀN THIỆN</div>
+                                <div class="display-4 fw-bold text-success" id="valFinalScore">0.00</div>
+                                <div class="mt-2" id="badgeRating"><span class="badge bg-secondary badge-rating">Chưa đánh giá</span></div>
+                            </div>
+
+                            <div class="w-100 text-center text-muted fs-7">
+                                Xếp loại: &ge; 90: Hoàn thành xuất sắc | 75 - 89.9: Hoàn thành tốt | 50 - 74.9: Hoàn thành nhiệm vụ | &lt; 50: Chưa hoàn thành.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-source text-center">
+        Phòng CSDL - Văn phòng đăng ký đất đai tỉnh An Giang (Đ/c Lê Văn Thạnh, 0979984872)
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Cấu hình 6 Trục Đánh giá Nhiệm vụ & Mức trần điểm quy định
+const AXIS_CONFIG = [
+    { id: 1, rome: "I", name: "Thực hiện các mục tiêu và nhiệm vụ chính trị được giao", maxScore: 30 },
+    { id: 2, rome: "II", name: "Việc cụ thể hóa, triển khai thực hiện các chương trình, đề án, kế hoạch, quy định", maxScore: 15 },
+    { id: 3, rome: "III", name: "Việc phát triển khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số", maxScore: 10 },
+    { id: 4, rome: "IV", name: "Việc xây dựng đảng và hệ thống chính trị trong sạch, vững mạnh; giữ gìn đoàn kết, thống nhất nội bộ; phòng, chống tham nhũng, lãng phí, tiêu cực", maxScore: 5 },
+    { id: 5, rome: "V", name: "Việc phát triển văn hóa, con người, bảo đảm an sinh xã hội, nâng cao đời sống nhân dân", maxScore: 5 },
+    { id: 6, rome: "VI", name: "Việc củng cố quốc phòng, an ninh, giữ vững ổn định chính trị - xã hội, nâng cao hiệu quả đối ngoại và hội nhập quốc tế", maxScore: 5 }
+];
+
+let tasks = [];
+
+function parseSafeFloat(val, defaultVal = 0) {
+    if (val === undefined || val === null || val === '') return defaultVal;
+    if (typeof val === 'number') return isNaN(val) ? defaultVal : val;
+    let str = String(val).trim();
+    if (str === '') return defaultVal;
+    if (str.endsWith('%')) str = str.slice(0, -1).trim();
+    str = str.replace(',', '.');
+    let num = parseFloat(str);
+    return isNaN(num) ? defaultVal : num;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    loadAISangSampleData();
+});
+
+function loadAISangSampleData() {
+    // Dữ liệu mẫu được đối chiếu 1:1 với file Mau_so_02_-_AISANG.xlsx gốc (sheet chamdiem)
+    tasks = [
+        // ===== TRỤC 1 =====
+        mkTask(1,"Chỉ đạo tham mưu ban hành Nghị quyết quy định mức thu, chế độ thu, nộp, quản lý, và sử dụng tài liệu đất đai trên địa bàn tỉnh an Giang","Sở Nông nghiệp và Môi trường","Mới, Toàn hệ thống, không quá khó và phức tạo","Nghị quyết",1,"Hoàn thành",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Chỉ đạo tham mưu ban hành Nghị quyết quy định mức thu, chế độ thu, nộp, quản lý, và sử dụng phí thẩm định hồ sơ cấp giấy chứng nhận quyền sử dụng đất trên địa bàn tỉnh An Giang","Ủy ban nhân dân tỉnh An Giang","Mới, Toàn tỉnh, không quá khó và phức tạo","Nghị quyết",1,"Hoàn thành",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Chỉ đạo tham mưu Ban hành Nghị quyết quy định mức thu, chế độ thu, miễn, nộp, quản lý và sử dụng phí cung cấp thông tin về giao dịch bảo đảm quyền sở hữu nhà, tài sản gắn liền với đất trên địa bàn tỉnh An Giang","Ủy ban nhân dân tỉnh An Giang","Mới, Toàn tỉnh, không quá khó và phức tạo","Nghị quyết",1,"đang trình ký",1,0.3,0.3,0.3,0.3),
+        mkTask(1,"Chỉ đạo tham mưu Ban hành Quyết định quy định về Định mức kinh tế - kỹ thuật về Đăng ký cấp giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất trên địa bàn tỉnh An Giang","Ủy ban nhân dân tỉnh An Giang","Mới, Toàn tỉnh, không quá khó và phức tạo","Nghị quyết",1,"Hoàn thành",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Chỉ đạo Tham mưu ban hành giá dịch vụ đăng ký, cấp giấy chứng nhận quyền sử dụng đất, quyền sở hữu nhà ở và tài sản khác gắn liền với đất trên địa bàn tỉnh","Ủy ban nhân dân tỉnh An Giang","Mới, Toàn tỉnh, không quá khó và phức tạo","Nghị quyết",1,"Hoàn thành",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Chỉ đạo tham mưu công tác lương và các chế độ","Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Quyết định",42,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Công tác đăng ký và cấp giấy chứng nhận","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Kế hoạch, Công văn, Giấy mời",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Khẩn trương rà soát, tham mưu hoàn thành việc công bố thủ tục hành chính, quy trình nội bộ lĩnh vực đất đai","Sở Nông nghiệp và Môi trường","Mới, Toàn tỉnh, không quá khó và phức tạo","Kế hoạch",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Chỉ đạo chung công tác cải cách hành chính và hỗ trợ doanh nghiệp; công tác tiếp nhận hồ sơ và trả kết quả giải quyết thủ tục hành chính về đất đai theo quy định (tại Trung tâm Phục vụ hành chính công cơ sở 1)","Sở Nông nghiệp và Môi trường","","Hồ sơ",1,"Hoàn thành",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Giao Văn phòng Đăng ký đất đai tỉnh sau khi nhận được bảng hoàn chỉnh từ Đơn vị tư vấn, nhanh chóng rà soát, gửi lấy ý kiến và tổng hợp nội dung Xác nhận của 102 Xã, phường, đặc khu chậm nhất đến 11 giờ 00 phút ngày 29/6/2026;","Sở Nông nghiệp và Môi trường","","Công văn",1,"Hoàn thành",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Chủ động rà soát, tham mưu các nội dung liên quan đến hồ sơ địa chính, việc cấp Giấy chứng nhận quyền sử dụng đất, đăng ký đất đai, chỉnh lý hồ sơ địa chính và các nội dung khác thuộc chức năng, nhiệm vụ của đơn vị; phối hợp cung cấp hồ sơ, tài liệu và các thông tin có liên quan phục vụ Chi cục Quản lý đất đai tổng hợp.","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Báo cáo",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Khẩn trương rà soát, tham mưu giải quyết dứt điểm các nhiệm vụ do UBND tỉnh, Chủ tịch UBND tỉnh giao","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không quá khó và phức tạo","Báo cáo",1,"Hoàn thành, khó, phức tạp",1,0.5,0.5,0.5,0.5),
+        mkTask(1,"Tham mưu UBND tỉnh cung cấp hồ sơ, tài liệu, chứng cứ theo yêu cầu của Tòa án (người khởi kiện bà Võ Thị Xuân Đào)","Ủy ban nhân dân tỉnh An Giang","Nhiệm vụ thường xuyên","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Tham mưu tháo gỡ khó khăn, vướng mắc đối với hồ sơ chuyển mục đích sử dụng đất của Công ty Cổ phần Rau quả thực phẩm An Giang","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không quá khó và phức tạo","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Khẩn trương đôn đốc, thực hiện dứt điểm và báo cáo kết quả thực hiện các nhiệm vụ trễ hạn","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Đôn đốc, Xem Xét cấp giấy chứng nhận quyền sử dụng đất đối với bà Nguyễn Thị Kim Khuynh","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không quá khó và phức tạo","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Lấy ý kiến đối với nền đất ở thuộc dự án Khu nhà ở thương mại đường Kênh Đào nối dài của Công ty TNHH Huy Trường Thịnh","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không quá khó và phức tạo","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Báo cáo kết quả thực hiện Kết luận thanh số 331/KL-TTCP ngày 22/6/2026 của Thanh tra Chính phủ (lần 2).","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không quá khó và phức tạo","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(1,"Tham mưu Xử lý đề nghị điều chỉnh giấy chứng nhận quyền sử dụng đất rừng phòng hộ (nay là Vườn Quốc gia Phú Quốc) tại 08 Hòn thuộc quần đảo Nam An Thới để phù hợp với ranh rừng phòng hộ được quy hoạch theo Quyết định 150/QĐ-TTg ngày 06/02/2024 của Thủ tướng Chính phủ","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, Toàn tỉnh, không quá khó và phức tạo","Văn bản",1,"Đang xử lý",1,0.2,0.2,0.2,0.2),
+
+        // ===== TRỤC 2 =====
+        mkTask(2,"Thực hiện tuyển dụng viên chức","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, Toàn tỉnh, không quá khó và phức tạo","Công văn",1,1,1,1,1,1,1),
+        mkTask(2,"Chỉ đạo tham mưu công tác đào tạo","Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Công văn",1,1,1,1,1,1,1),
+        mkTask(2,"Chỉ đạo tham mưu công tác đánh giá","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Thông báo, Công văn",1,1,1,1,1,1,1),
+        mkTask(2,"Chuẩn bị nội dung tổng kết công tác cấp giấy chứng nhận quyền sử dụng đất lần đầu của tổ chức để định hướng thực hiện theo Nghị định số 151/2025/NĐ-CP; Nghị quyết 254 và Nghị định 49/2026/NĐ-CP","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không quá khó, phức tạp","Giấy mời, nội dung",1,1,1,0.5,0.5,0.5,0.5),
+        mkTask(2,"Quyết định ban hành Quy chế phối hợp thực hiện chức năng, nhiệm vụ, quyền hạn giữa Văn phòng đăng ký đất đai, Chi nhánh Văn phòng đăng ký đất đai với cơ quan có chức năng quản lý đất đai cấp Xã, Ủy ban nhân dân cấp Xã, cơ quan tài chính, cơ quan thuế và các cơ quan, đơn vị khác có liên quan","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Quyết định",1,1,1,0.3,0.3,0.3,0.3),
+
+        // ===== TRỤC 3 =====
+        mkTask(3,"Chỉ đạo đẩy mạnh cải cách, chuyển đổi số, ứng dụng công nghệ thông tin trong quản lý, điều hành và giải quyết thủ tục hành chính; bảo đảm an toàn thông tin, dữ liệu, máy tính và mạng. Chỉ đạo Kế hoạch số 2959/KH-BNNMT-BCA ngày 29/3/2026:","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, Toàn tỉnh, không quá khó và phức tạo","Báo cáo",1,1,1,0.8,0.8,0.8,0.8),
+
+        // ===== TRỤC 4 =====
+        mkTask(4,"Chỉ đạo công tác bảo vệ bí mật nhà nước, thực hiện quy chế dân chủ cơ sở.","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Nhiệm vụ thường xuyên","Kế hoạch",1,1,1,1,1,1,1),
+
+        // ===== TRỤC 5 =====
+        mkTask(5,"Phối hợp Công đoàn cơ sở Văn phòng đăng ký đất đai tổ chức hội nghị viên chức và người lao động năm 2026. Thực hiện đầy đủ, kịp thời các chế độ, chính sách, bảo vệ quyền và lợi ích hợp pháp, chính đáng của viên chức, người lao động toàn hệ thống.","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","","Kế hoạch",1,1,1,1,1,1,1),
+
+        // ===== TRỤC 6 (50 nhiệm vụ rút gọn còn các dòng khác nhau về tỷ lệ để minh họa đủ dải điểm) =====
+        mkTask(6,"Lấy ý kiến đối với nền đất ở thuộc dự án Khu nhà ở thương mại 32","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không khó và phức tạp","Báo cáo",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(6,"Lấy ý kiến đối với nền đất ở thuộc dự án Khu nhà ở thương mại  1","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không khó và phức tạp","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(6,"Lấy ý kiến đối với nền đất ở thuộc dự án Khu nhà ở thương mại  2","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không khó và phức tạp","Công văn",1,"Hoàn thành",1,1,1,1,1),
+        mkTask(6,"Lấy ý kiến đối với nền đất ở thuộc dự án Khu nhà ở thương mại 32 (2)","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không khó và phức tạp","Công văn",1,"Hoàn thành",1,0.8,0.8,0.8,0.8),
+        mkTask(6,"Văn bản đề nghị chưa đủ hồ sơ pháp lý","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không khó và phức tạp","Văn bản",1,"Hoàn thành",1,0.2,0.2,0.2,0.2),
+        mkTask(6,"Tờ trình xin ý kiến chỉ đạo xử lý đơn khiếu nại","Sở Nông nghiệp và Môi trường; Văn phòng đăng ký đất đai","Mới, không khó và phức tạp","Tờ trình",1,"Hoàn thành",1,0.5,0.5,0.5,0.5)
+    ];
+
+    document.getElementById("inputGeneralScore").value = 30;
+    document.getElementById("inputHoTen").value = "";
+    document.getElementById("inputChucVu").value = "";
+    document.getElementById("inputDonVi").value = "Văn phòng đăng ký đất đai tỉnh An Giang";
+    document.getElementById("inputKyDanhGia").value = "Quý III năm 2026";
+    renderTab1();
+    renderTab2();
+    calculateKPI();
+}
+
+// Helper tạo nhanh 1 task. Tham số cuối cùng có thể là 4 số riêng (SL,CL,TĐ,D) hoặc bỏ qua Ghi chú khi số tham số ít hơn.
+function mkTask(axisId, nhiemVu, capTrinh, doKho, sanPham, soLuongKH, tienDoKH, heSoQD, ttA, ttB, ttC, ttD) {
+    // Hỗ trợ 2 kiểu gọi: đủ 11 tham số (có tienDoKH dạng text) hoặc thiếu (Trục 2-6 dùng số 1 cho Tiến độ do dữ liệu gốc để trống)
+    return {
+        maCV: "", axisId: axisId, stt: 0,
+        nhiemVu: nhiemVu, capTrinh: capTrinh || "", doKho: doKho || "",
+        sanPham: sanPham, soLuongKH: soLuongKH,
+        tienDoKH: (typeof tienDoKH === 'string') ? tienDoKH : (tienDoKH === 1 ? "Hoàn thành" : String(tienDoKH)),
+        ghiChu: "", diemCham: Math.round(heSoQD * 100), heSoQD: heSoQD,
+        tt_soLuong: ttA, tt_chatLuong: ttB, tt_tienDo: ttC, tt_lanhDao: ttD
+    };
+}
+
+function renderTab1() {
+    const tbody = document.getElementById("tbodyTab1");
+    tbody.innerHTML = "";
+
+    AXIS_CONFIG.forEach(axis => {
+        const trAxis = document.createElement("tr");
+        trAxis.className = "axis-header-row";
+        trAxis.innerHTML = `
+            <td colspan="12" class="py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-folder-open me-2"></i><strong>TRỤC ${axis.rome}: ${axis.name.toUpperCase()} (Trục ${axis.id})</strong> (Mức trần: ${axis.maxScore}đ)</span>
+                    <button class="btn btn-sm btn-light text-success fw-bold" onclick="addRowToAxis(${axis.id})"><i class="fa-solid fa-plus me-1"></i> Thêm việc Trục ${axis.id}</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(trAxis);
+
+        const axisTasks = tasks.filter(t => t.axisId === axis.id);
+        if (axisTasks.length === 0) {
+            const trEmpty = document.createElement("tr");
+            trEmpty.innerHTML = `<td colspan="12" class="text-center text-muted fst-italic fs-7 py-2">Chưa có công việc trong trục này. Bấm 'Thêm việc' để bổ sung.</td>`;
+            tbody.appendChild(trEmpty);
+        } else {
+            axisTasks.forEach((item, idx) => {
+                const globalIndex = tasks.indexOf(item);
+                item.stt = idx + 1;
+                item.maCV = item.maCV || (`CV${axis.id}.${item.stt}`);
+                item.heSoQD = (item.diemCham / 100).toFixed(2);
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center fw-bold text-primary">${item.maCV}</td>
+                    <td class="text-center fw-bold">${item.stt}</td>
+                    <td><textarea class="form-control input-sm-custom" rows="2" onchange="updateTask(${globalIndex}, 'nhiemVu', this.value)">${item.nhiemVu}</textarea></td>
+                    <td><input type="text" class="form-control input-sm-custom" value="${item.capTrinh}" onchange="updateTask(${globalIndex}, 'capTrinh', this.value)"></td>
+                    <td><textarea class="form-control input-sm-custom" rows="2" onchange="updateTask(${globalIndex}, 'doKho', this.value)">${item.doKho}</textarea></td>
+                    <td><input type="text" class="form-control input-sm-custom" value="${item.sanPham}" onchange="updateTask(${globalIndex}, 'sanPham', this.value)"></td>
+                    <td><input type="text" class="form-control input-sm-custom text-center" value="${item.soLuongKH}" onchange="updateTask(${globalIndex}, 'soLuongKH', this.value)"></td>
+                    <td><input type="text" class="form-control input-sm-custom" value="${item.tienDoKH}" onchange="updateTask(${globalIndex}, 'tienDoKH', this.value)"></td>
+                    <td><input type="text" class="form-control input-sm-custom" value="${item.ghiChu || ''}" onchange="updateTask(${globalIndex}, 'ghiChu', this.value)"></td>
+                    <td><input type="number" step="any" class="form-control input-sm-custom text-center fw-bold text-success" value="${item.diemCham}" onchange="updateTask(${globalIndex}, 'diemCham', parseSafeFloat(this.value, 100))"></td>
+                    <td class="text-center fw-bold text-primary">${item.heSoQD}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeTask(${globalIndex})"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    });
+}
+
+function updateTask(index, field, value) {
+    tasks[index][field] = value;
+    if (field === 'diemCham') {
+        tasks[index].heSoQD = (tasks[index].diemCham / 100).toFixed(2);
+    }
+    renderTab1();
+    renderTab2();
+    calculateKPI();
+}
+
+function addRowToAxis(axisId) {
+    const count = tasks.filter(t => t.axisId === axisId).length + 1;
+    tasks.push({
+        maCV: `CV${axisId}.${count}`,
+        axisId: axisId,
+        stt: count,
+        nhiemVu: "Nhiệm vụ mới",
+        capTrinh: "Sở Nông nghiệp và Môi trường",
+        doKho: "Nhiệm vụ thường xuyên",
+        sanPham: "Báo cáo",
+        soLuongKH: 1,
+        tienDoKH: "Quý III",
+        ghiChu: "",
+        diemCham: 100,
+        heSoQD: 1.0,
+        tt_soLuong: 1.0,
+        tt_chatLuong: 1.0,
+        tt_tienDo: 1.0,
+        tt_lanhDao: 1.0
+    });
+    renderTab1();
+    renderTab2();
+    calculateKPI();
+}
+
+function removeTask(index) {
+    if (confirm("Bạn có chắc chắn muốn xóa công việc này?")) {
+        tasks.splice(index, 1);
+        renderTab1();
+        renderTab2();
+        calculateKPI();
+    }
+}
+
+function renderTab2() {
+    const tbody = document.getElementById("tbodyTab2");
+    tbody.innerHTML = "";
+
+    AXIS_CONFIG.forEach(axis => {
+        const axisTasks = tasks.filter(t => t.axisId === axis.id);
+
+        let axisSLKH_QD = 0, axisQD_A = 0, axisQD_B = 0, axisQD_C = 0, axisQD_D = 0;
+        axisTasks.forEach(item => {
+            // Đúng theo công thức gốc Mẫu 02 AISANG: "Số lượng quy đổi" (G) = Hệ số quy đổi (F)
+            // (không nhân với Số lượng kế hoạch, vì Số lượng chỉ mang tính mô tả/báo cáo)
+            const hsQD = parseFloat(item.heSoQD) || 1.0;
+            const slQD = hsQD;
+            axisSLKH_QD += slQD;
+            axisQD_A += (item.tt_soLuong * slQD);
+            axisQD_B += (item.tt_chatLuong * slQD);
+            axisQD_C += (item.tt_tienDo * slQD);
+            axisQD_D += (item.tt_lanhDao * slQD);
+        });
+
+        const pctA = axisSLKH_QD > 0 ? (axisQD_A / axisSLKH_QD) * 100 : 0;
+        const pctB = axisSLKH_QD > 0 ? (axisQD_B / axisSLKH_QD) * 100 : 0;
+        const pctC = axisSLKH_QD > 0 ? (axisQD_C / axisSLKH_QD) * 100 : 0;
+        const pctD = axisSLKH_QD > 0 ? (axisQD_D / axisSLKH_QD) * 100 : 0;
+        const axisKPIPercent = (pctA + pctB + pctC + pctD) / 4;
+        const axisScore = Math.min(axis.maxScore, (axisKPIPercent / 100) * axis.maxScore);
+
+        // Hiển thị số điểm tổng sau khi chấm điểm ở tiêu đề mỗi Trục
+        const trAxis = document.createElement("tr");
+        trAxis.className = "axis-header-row";
+        trAxis.innerHTML = `
+            <td colspan="16" class="py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span><i class="fa-solid fa-folder-open me-2"></i><strong>TRỤC ${axis.rome}: ${axis.name.toUpperCase()} (Trục ${axis.id})</strong></span>
+                    <div>
+                        <span class="badge bg-secondary me-2">Tỷ lệ KPI Trục: ${axisKPIPercent.toFixed(2)}%</span>
+                        <span class="axis-score-badge"><i class="fa-solid fa-star me-1 text-warning"></i>ĐIỂM ĐẠT TRỤC ${axis.id}: ${axisScore.toFixed(2)} / ${axis.maxScore}đ</span>
+                    </div>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(trAxis);
+
+        if (axisTasks.length === 0) {
+            const trEmpty = document.createElement("tr");
+            trEmpty.innerHTML = `<td colspan="16" class="text-center text-muted fst-italic fs-7 py-2">Chưa có công việc trong trục này.</td>`;
+            tbody.appendChild(trEmpty);
+        } else {
+            axisTasks.forEach((item, idx) => {
+                const globalIndex = tasks.indexOf(item);
+                item.stt = idx + 1;
+                item.maCV = item.maCV || (`CV${axis.id}.${item.stt}`);
+                const hsQD = parseFloat(item.heSoQD) || 1.0;
+                const slQD = hsQD;
+                const slKHQD = slQD.toFixed(2);
+
+                const qd_A = (item.tt_soLuong * slQD).toFixed(2);
+                const qd_B = (item.tt_chatLuong * slQD).toFixed(2);
+                const qd_C = (item.tt_tienDo * slQD).toFixed(2);
+                const qd_D = (item.tt_lanhDao * slQD).toFixed(2);
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center fw-bold text-primary">${item.maCV}</td>
+                    <td class="text-center fw-bold">${item.stt}</td>
+                    
+                    <td class="fs-7">${item.nhiemVu}</td>
+                    <td class="text-center">${item.sanPham}</td>
+                    <td class="text-center">${item.soLuongKH}</td>
+                    <td class="text-center">${item.tienDoKH}</td>
+                    <td class="text-center">${hsQD}</td>
+                    <td class="text-center fw-bold text-dark">${slKHQD}</td>
+
+                    <td><input type="number" step="0.01" class="form-control input-sm-custom text-center" value="${item.tt_soLuong}" onchange="updateTab2Val(${globalIndex}, 'tt_soLuong', parseSafeFloat(this.value, 0))"></td>
+                    <td class="text-center fw-bold text-primary">${qd_A}</td>
+
+                    <td><input type="number" step="0.01" class="form-control input-sm-custom text-center" value="${item.tt_chatLuong}" onchange="updateTab2Val(${globalIndex}, 'tt_chatLuong', parseSafeFloat(this.value, 0))"></td>
+                    <td class="text-center fw-bold text-success">${qd_B}</td>
+
+                    <td><input type="number" step="0.01" class="form-control input-sm-custom text-center" value="${item.tt_tienDo}" onchange="updateTab2Val(${globalIndex}, 'tt_tienDo', parseSafeFloat(this.value, 0))"></td>
+                    <td class="text-center fw-bold text-warning">${qd_C}</td>
+
+                    <td><input type="number" step="0.01" class="form-control input-sm-custom text-center" value="${item.tt_lanhDao}" onchange="updateTab2Val(${globalIndex}, 'tt_lanhDao', parseSafeFloat(this.value, 0))"></td>
+                    <td class="text-center fw-bold text-info">${qd_D}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    });
+}
+
+function updateTab2Val(index, field, value) {
+    tasks[index][field] = value;
+    renderTab2();
+    calculateKPI();
+}
+
+function calculateKPI() {
+    let grandSLKH_QD = 0, grandQD_A = 0, grandQD_B = 0, grandQD_C = 0, grandQD_D = 0;
+    let totalTaskScoreAllAxes = 0;
+
+    const tbodyP3 = document.getElementById("tbodyTab3Summary");
+    tbodyP3.innerHTML = "";
+
+    AXIS_CONFIG.forEach(axis => {
+        const axisTasks = tasks.filter(t => t.axisId === axis.id);
+        let axisSLKH_QD = 0, axisQD_A = 0, axisQD_B = 0, axisQD_C = 0, axisQD_D = 0;
+
+        axisTasks.forEach(item => {
+            const hsQD = parseFloat(item.heSoQD) || 1.0;
+            const slQD = hsQD; // SL quy đổi = Hệ số quy đổi (đúng công thức Mẫu 02 gốc)
+            axisSLKH_QD += slQD;
+            axisQD_A += (item.tt_soLuong * slQD);
+            axisQD_B += (item.tt_chatLuong * slQD);
+            axisQD_C += (item.tt_tienDo * slQD);
+            axisQD_D += (item.tt_lanhDao * slQD);
+        });
+
+        grandSLKH_QD += axisSLKH_QD;
+        grandQD_A += axisQD_A;
+        grandQD_B += axisQD_B;
+        grandQD_C += axisQD_C;
+        grandQD_D += axisQD_D;
+
+        const pctA = axisSLKH_QD > 0 ? (axisQD_A / axisSLKH_QD) * 100 : 0;
+        const pctB = axisSLKH_QD > 0 ? (axisQD_B / axisSLKH_QD) * 100 : 0;
+        const pctC = axisSLKH_QD > 0 ? (axisQD_C / axisSLKH_QD) * 100 : 0;
+        const pctD = axisSLKH_QD > 0 ? (axisQD_D / axisSLKH_QD) * 100 : 0;
+        const axisKPIPercent = (pctA + pctB + pctC + pctD) / 4;
+
+        const rawScore = (axisKPIPercent / 100) * axis.maxScore;
+        const axisScore = Math.min(axis.maxScore, Math.max(0, rawScore));
+        totalTaskScoreAllAxes += axisScore;
+
+        const trP3 = document.createElement("tr");
+        trP3.innerHTML = `
+            <td><strong>Trục ${axis.rome}: ${axis.name}</strong></td>
+            <td class="text-center text-danger fw-bold">${axis.maxScore}.00</td>
+            <td class="text-center fw-bold text-primary">${axisKPIPercent.toFixed(2)}%</td>
+            <td class="text-center fw-bold text-success">${axisScore.toFixed(2)}</td>
+        `;
+        tbodyP3.appendChild(trP3);
+    });
+
+    const tfoot2 = document.getElementById("tfootTab2");
+    tfoot2.innerHTML = `
+        <tr>
+            <td colspan="7" class="text-end">TỔNG CỘNG QUY ĐỔI TOÀN BỘ 6 TRỤC:</td>
+            <td class="text-center text-dark fs-6">${grandSLKH_QD.toFixed(2)}</td>
+            <td></td>
+            <td class="text-center text-primary fs-6">${grandQD_A.toFixed(2)}</td>
+            <td></td>
+            <td class="text-center text-success fs-6">${grandQD_B.toFixed(2)}</td>
+            <td></td>
+            <td class="text-center text-warning fs-6">${grandQD_C.toFixed(2)}</td>
+            <td></td>
+            <td class="text-center text-info fs-6">${grandQD_D.toFixed(2)}</td>
+        </tr>
+    `;
+
+    const overallAvgPercent = grandSLKH_QD > 0 ? (((grandQD_A + grandQD_B + grandQD_C + grandQD_D) / 4) / grandSLKH_QD) * 100 : 0;
+    document.getElementById("valSumKPIPercent").innerText = overallAvgPercent.toFixed(2) + "%";
+    document.getElementById("valSumTaskScore").innerText = totalTaskScoreAllAxes.toFixed(2);
+
+    const generalScoreInput = parseSafeFloat(document.getElementById("inputGeneralScore").value, 30);
+    const generalScore = Math.min(30, Math.max(0, generalScoreInput));
+    const finalScore = generalScore + totalTaskScoreAllAxes;
+
+    document.getElementById("cardGeneralScore").innerText = generalScore.toFixed(2);
+    document.getElementById("cardTaskScore").innerText = totalTaskScoreAllAxes.toFixed(2);
+    document.getElementById("valFinalScore").innerText = finalScore.toFixed(2);
+
+    const badgeEl = document.getElementById("badgeRating");
+    if (finalScore >= 90) {
+        badgeEl.innerHTML = `<span class="badge bg-success p-2 fs-6"><i class="fa-solid fa-trophy me-1"></i> HOÀN THÀNH XUẤT SẮC</span>`;
+    } else if (finalScore >= 75) {
+        badgeEl.innerHTML = `<span class="badge bg-primary p-2 fs-6"><i class="fa-solid fa-circle-check me-1"></i> HOÀN THÀNH TỐT</span>`;
+    } else if (finalScore >= 50) {
+        badgeEl.innerHTML = `<span class="badge bg-warning text-dark p-2 fs-6"><i class="fa-solid fa-triangle-exclamation me-1"></i> HOÀN THÀNH NHIỆM VỤ</span>`;
+    } else {
+        badgeEl.innerHTML = `<span class="badge bg-danger p-2 fs-6"><i class="fa-solid fa-circle-xmark me-1"></i> CHƯA HOÀN THÀNH</span>`;
+    }
+}
+
+/* 1. TẢI MẪU DANH MỤC CÔNG VIỆC EXCEL (SHEET: danhmuc) */
+function downloadTemplateDanhMuc() {
+    let rowsData = [];
+    rowsData.push(["TT", "Nhiệm vụ theo Quý", "Cấp trình (cấp phê duyệt)", "Độ khó, mới, phức tạo, phạm vi tác động", "Sản phẩm", "Số lượng", "Tiến độ (mốc thời gian hoàn thành)", "Ghi chú", "Điểm chấm công việc", "Hệ số quy đổi"]);
+
+    AXIS_CONFIG.forEach(axis => {
+        rowsData.push([axis.rome, `${axis.name} (Trục ${axis.id})`, "", "", "", "", "", "", "", ""]);
+        const axisTasks = tasks.filter(t => t.axisId === axis.id);
+        if (axisTasks.length > 0) {
+            axisTasks.forEach(t => {
+                rowsData.push([t.stt, t.nhiemVu, t.capTrinh, t.doKho, t.sanPham, t.soLuongKH, t.tienDoKH, t.ghiChu, t.diemCham, parseFloat(t.heSoQD)]);
+            });
+        } else {
+            rowsData.push([1, `Ví dụ nhiệm vụ thuộc trục ${axis.id}`, "Sở Nông nghiệp và Môi trường", "Nhiệm vụ thường xuyên", "Báo cáo", 1, "Quý III", "Công việc chuẩn", 100, 1]);
+        }
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rowsData);
+    ws['!cols'] = [{ wch: 6 }, { wch: 45 }, { wch: 25 }, { wch: 30 }, { wch: 20 }, { wch: 10 }, { wch: 15 }, { wch: 18 }, { wch: 18 }, { wch: 12 }];
+    XLSX.utils.book_append_sheet(wb, ws, "danhmuc");
+    XLSX.writeFile(wb, "Mau_Danh_Muc_Cong_Viec_Sheet_danhmuc.xlsx");
+}
+
+/* 2. ĐẨY FILE EXCEL ĐỂ NẠP DỮ LIỆU TỰ ĐỘNG (đọc cả 2 sheet: danhmuc = kế hoạch, chamdiem = thực tế) */
+const AXIS_ROME_MAP = {'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6};
+
+function isAxisMarker(v) {
+    return AXIS_ROME_MAP.hasOwnProperty(String(v || '').trim());
+}
+
+// Một dòng được coi là dòng "nhiệm vụ" khi cột đầu là số thứ tự hợp lệ và cột B có nội dung,
+// không phải là dòng tiêu đề / dòng tổng / dòng công thức phụ (A=, B=, KPI..., TỔNG...)
+function isTaskRow(row) {
+    const c1 = String(row[1] || '').trim();
+    if (!c1) return false;
+    const c0 = row[0];
+    if (isAxisMarker(c0)) return false;
+    const skip = ['A =', 'B =', 'C =', 'D =', 'TỔNG', 'KPI', '=>', 'Nhiệm vụ', 'NHIỆM VỤ', 'BẢNG', 'TT', 'Bảng'];
+    if (skip.some(p => c1.startsWith(p))) return false;
+    if (c0 === undefined || c0 === null || c0 === '') return false;
+    const n = parseFloat(String(c0).replace(',', '.'));
+    return !isNaN(n);
+}
+
+// Đọc sheet "danhmuc" -> danh sách kế hoạch theo từng trục
+function parseDanhMucSheet(sheet) {
+    const rows = XLSX.utils.sheet_to_json(sheet, {header: 1, raw: true});
+    const byAxis = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []};
+    let currentAxis = 1;
+    rows.forEach(row => {
+        if (!row || row.length === 0) return;
+        const col0 = String(row[0] || '').trim();
+        if (isAxisMarker(col0)) { currentAxis = AXIS_ROME_MAP[col0]; return; }
+        if (!isTaskRow(row)) return;
+        const diem = parseSafeFloat(row[8], 100);
+        byAxis[currentAxis].push({
+            nhiemVu: String(row[1] || '').trim(),
+            capTrinh: (row[2] !== undefined && row[2] !== null) ? String(row[2]).trim() : 'Sở Nông nghiệp và Môi trường',
+            doKho: (row[3] !== undefined && row[3] !== null) ? String(row[3]).trim() : 'Nhiệm vụ thường xuyên',
+            sanPham: (row[4] !== undefined && row[4] !== null) ? String(row[4]).trim() : 'Báo cáo',
+            soLuongKH: (row[5] !== undefined && row[5] !== null && row[5] !== '') ? row[5] : 1,
+            tienDoKH: (row[6] !== undefined && row[6] !== null) ? String(row[6]).trim() : 'Quý III',
+            ghiChu: (row[7] !== undefined && row[7] !== null) ? String(row[7]).trim() : '',
+            diemCham: diem,
+            heSoQD: parseSafeFloat(row[9], diem / 100)
+        });
+    });
+    return byAxis;
+}
+
+// Đọc sheet "chamdiem" -> danh sách thực tế triển khai theo từng trục (cột theo đúng Mẫu 02 gốc)
+// A=TT,B=Nhiệm vụ,C=Sản phẩm,D=Số lượng,E=Tiến độ,F=Hệ số quy đổi,G=SL quy đổi,
+// H=KPI(SL)TT,I=QĐ, J=KPI(CL)TT,K=QĐ, L=KPI(TĐ)TT,M=QĐ, N=D(Lãnh đạo)TT,O=QĐ
+function parseChamDiemSheet(sheet) {
+    const rows = XLSX.utils.sheet_to_json(sheet, {header: 1, raw: true});
+    const byAxis = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []};
+    let currentAxis = 1;
+    rows.forEach(row => {
+        if (!row || row.length === 0) return;
+        const col0 = String(row[0] || '').trim();
+        if (isAxisMarker(col0)) { currentAxis = AXIS_ROME_MAP[col0]; return; }
+        if (!isTaskRow(row)) return;
+        const hsQD = parseSafeFloat(row[5], 1);
+        byAxis[currentAxis].push({
+            nhiemVu: String(row[1] || '').trim(),
+            sanPham: (row[2] !== undefined && row[2] !== null) ? String(row[2]).trim() : '',
+            soLuongKH: (row[3] !== undefined && row[3] !== null && row[3] !== '') ? row[3] : 1,
+            tienDoKH: (row[4] !== undefined && row[4] !== null) ? String(row[4]).trim() : '',
+            heSoQD: hsQD,
+            tt_soLuong: parseSafeFloat(row[7], 1),
+            tt_chatLuong: parseSafeFloat(row[9], 1),
+            tt_tienDo: parseSafeFloat(row[11], 1),
+            tt_lanhDao: parseSafeFloat(row[13], 1)
+        });
+    });
+    return byAxis;
+}
+
+function importExcelFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+
+        const dmSheetName = workbook.SheetNames.find(s => s.toLowerCase().replace(/\s/g,'').includes('danhmuc'));
+        const cdSheetName = workbook.SheetNames.find(s => s.toLowerCase().replace(/\s/g,'').includes('chamdiem'));
+
+        if (!dmSheetName && !cdSheetName) {
+            alert("Không tìm thấy sheet 'danhmuc' hoặc 'chamdiem' trong file Excel! Vui lòng dùng đúng file theo Mẫu số 02 - AISANG.");
+            return;
+        }
+
+        const dmByAxis = dmSheetName ? parseDanhMucSheet(workbook.Sheets[dmSheetName]) : {1:[],2:[],3:[],4:[],5:[],6:[]};
+        const cdByAxis = cdSheetName ? parseChamDiemSheet(workbook.Sheets[cdSheetName]) : {1:[],2:[],3:[],4:[],5:[],6:[]};
+
+        let newTasks = [];
+        for (let axisId = 1; axisId <= 6; axisId++) {
+            const planList = dmByAxis[axisId] || [];
+            const actualList = cdByAxis[axisId] || [];
+            const n = Math.max(planList.length, actualList.length);
+            for (let i = 0; i < n; i++) {
+                const plan = planList[i];
+                const actual = actualList[i];
+                const stt = i + 1;
+                newTasks.push({
+                    maCV: `CV${axisId}.${stt}`,
+                    axisId: axisId,
+                    stt: stt,
+                    nhiemVu: (actual && actual.nhiemVu) || (plan && plan.nhiemVu) || `Nhiệm vụ ${stt}`,
+                    capTrinh: (plan && plan.capTrinh) || 'Sở Nông nghiệp và Môi trường',
+                    doKho: (plan && plan.doKho) || 'Nhiệm vụ thường xuyên',
+                    sanPham: (actual && actual.sanPham) || (plan && plan.sanPham) || 'Báo cáo',
+                    soLuongKH: (plan && plan.soLuongKH !== undefined) ? plan.soLuongKH : ((actual && actual.soLuongKH !== undefined) ? actual.soLuongKH : 1),
+                    tienDoKH: (plan && plan.tienDoKH) || (actual && actual.tienDoKH) || 'Quý III',
+                    ghiChu: (plan && plan.ghiChu) || '',
+                    diemCham: (plan && plan.diemCham !== undefined) ? plan.diemCham : Math.round(((actual && actual.heSoQD) || 1) * 100),
+                    heSoQD: (actual && actual.heSoQD !== undefined) ? actual.heSoQD : ((plan && plan.heSoQD !== undefined) ? plan.heSoQD : 1),
+                    tt_soLuong: (actual && actual.tt_soLuong !== undefined) ? actual.tt_soLuong : 1.0,
+                    tt_chatLuong: (actual && actual.tt_chatLuong !== undefined) ? actual.tt_chatLuong : 1.0,
+                    tt_tienDo: (actual && actual.tt_tienDo !== undefined) ? actual.tt_tienDo : 1.0,
+                    tt_lanhDao: (actual && actual.tt_lanhDao !== undefined) ? actual.tt_lanhDao : 1.0
+                });
+            }
+        }
+
+        if (newTasks.length > 0) {
+            tasks = newTasks;
+            renderTab1();
+            renderTab2();
+            calculateKPI();
+            const msg = [`Đã nạp ${newTasks.length} công việc vào 6 Trục Nhiệm vụ.`];
+            msg.push(dmSheetName ? `✔ Sheet "${dmSheetName}" (kế hoạch): ${Object.values(dmByAxis).reduce((s,a)=>s+a.length,0)} dòng.` : `⚠ Không có sheet danhmuc — dùng dữ liệu chamdiem làm gốc.`);
+            msg.push(cdSheetName ? `✔ Sheet "${cdSheetName}" (thực tế): ${Object.values(cdByAxis).reduce((s,a)=>s+a.length,0)} dòng.` : `⚠ Không có sheet chamdiem — mặc định 100% hoàn thành, cần chấm điểm thủ công ở Tab 2.`);
+            alert(msg.join('\n'));
+        } else {
+            alert("Không tìm thấy dữ liệu công việc hợp lệ trong file Excel!");
+        }
+    };
+    reader.readAsArrayBuffer(file);
+    event.target.value = '';
+}
+
+/* 3. XUẤT BÁO CÁO EXCEL — TRÚT DỮ LIỆU VÀO ĐÚNG KHUÔN MẪU SỐ 02 (sheet danhmuc + chamdiem)
+   Toàn bộ ô kết quả được ghi bằng CÔNG THỨC (không phải số cứng) để khi mở bằng Excel/LibreOffice
+   người dùng vẫn có thể sửa số liệu và bảng tự tính lại — đúng như file Mẫu 02 gốc. */
+
+// ==== Định dạng chuẩn theo file Mẫu 02 - AISANG gốc: font Times New Roman, cỡ chữ 13 (tiêu đề lớn 14, in đậm) ====
+const FONT_NAME = 'Times New Roman';
+const THIN = { style: 'thin', color: { rgb: '000000' } };
+const BORDER_ALL = { top: THIN, bottom: THIN, left: THIN, right: THIN };
+
+const STYLE_PRESETS = {
+    titleBig:   { font: { name: FONT_NAME, sz: 14, bold: true }, alignment: { horizontal: 'center', vertical: 'top', wrapText: true } },
+    titleBold:  { font: { name: FONT_NAME, sz: 13, bold: true }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true } },
+    plain:      { font: { name: FONT_NAME, sz: 13 }, alignment: { vertical: 'center', wrapText: true } },
+    plainCenter:{ font: { name: FONT_NAME, sz: 13 }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true } },
+    label:      { font: { name: FONT_NAME, sz: 13, bold: true }, alignment: { vertical: 'center', wrapText: true } },
+    axisHeader: { font: { name: FONT_NAME, sz: 13, bold: true }, alignment: { vertical: 'center', wrapText: true } },
+    headerCell: { font: { name: FONT_NAME, sz: 13, bold: true }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true }, border: BORDER_ALL },
+    dataCell:   { font: { name: FONT_NAME, sz: 13 }, alignment: { horizontal: 'left', vertical: 'center', wrapText: true }, border: BORDER_ALL },
+    dataCenter: { font: { name: FONT_NAME, sz: 13 }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true }, border: BORDER_ALL },
+    dataNumber: { font: { name: FONT_NAME, sz: 13 }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true }, border: BORDER_ALL },
+    summary:    { font: { name: FONT_NAME, sz: 13, bold: true }, alignment: { vertical: 'center', wrapText: true } },
+    summaryVal: { font: { name: FONT_NAME, sz: 13, bold: true }, alignment: { horizontal: 'center', vertical: 'center', wrapText: true } }
+};
+
+function mergeStyle(presetName, numFmt) {
+    const base = STYLE_PRESETS[presetName] || STYLE_PRESETS.plain;
+    if (!numFmt) return base;
+    return Object.assign({}, base, { numFmt: numFmt });
+}
+
+function setCell(ws, addr, value, opts) {
+    opts = opts || {};
+    let cell = {};
+    if (opts.formula) {
+        cell.t = 'n';
+        cell.f = opts.formula;
+    } else if (typeof value === 'number' && !isNaN(value)) {
+        cell.t = 'n';
+        cell.v = value;
+    } else {
+        cell.t = 's';
+        cell.v = (value === undefined || value === null) ? '' : String(value);
+    }
+    const style = mergeStyle(opts.style || 'plain', opts.numFmt);
+    cell.s = style;
+    if (opts.numFmt) cell.z = opts.numFmt; // giữ thêm z để tương thích khi đọc lại bằng công cụ khác
+    ws[addr] = cell;
+}
+
+function addMerge(mergeList, rangeStr) {
+    mergeList.push(XLSX.utils.decode_range(rangeStr));
+}
+
+function buildDanhMucSheet() {
+    const ws = {};
+    const merges = [];
+    const hoTen = document.getElementById("inputHoTen").value || '';
+    const chucVu = document.getElementById("inputChucVu").value || '';
+    const donVi = document.getElementById("inputDonVi").value || '';
+
+    setCell(ws, 'A1', 'SỞ NÔNG NGHIỆP VÀ MÔI TRƯỜNG\n', { style: 'plainCenter' }); addMerge(merges, 'A1:C1');
+    setCell(ws, 'D1', 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc', { style: 'titleBold' }); addMerge(merges, 'D1:J1');
+    setCell(ws, 'D2', '……………..., ngày    tháng    năm 2026', { style: 'plainCenter' }); addMerge(merges, 'D2:J2');
+    setCell(ws, 'A3', 'BẢNG DANH MỤC\nSản phẩm/công việc của cá nhân\n-------', { style: 'titleBig' }); addMerge(merges, 'A3:J3');
+    setCell(ws, 'B5', 'Họ và tên:  ' + hoTen, { style: 'label' });
+    setCell(ws, 'C5', ' Ngày sinh:  ', { style: 'label' });
+    setCell(ws, 'B6', 'Chức vụ Đảng:  ', { style: 'label' });
+    setCell(ws, 'B7', 'Chức vụ chính quyền:  ' + chucVu, { style: 'label' });
+    setCell(ws, 'B8', 'Chức vụ đoàn thể:  ', { style: 'label' });
+    setCell(ws, 'B9', 'Đơn vị công tác: ' + donVi, { style: 'label' });
+
+    const headers = ["TT", "Nhiệm vụ theo Quý", "Cấp trình\n(cấp phê duyệt)", "Độ khó, mới, phức tạo, phạm vi tác động", "Sản phẩm", "Số lượng", "Tiến độ\n(mốc thời gian hoàn thành)", "Ghi chú", "Điểm chấm công việc", "Hệ số quy đổi"];
+    const cols = ['A','B','C','D','E','F','G','H','I','J'];
+    headers.forEach((h, i) => setCell(ws, cols[i] + '11', h, { style: 'headerCell' }));
+
+    let row = 12;
+    AXIS_CONFIG.forEach(axis => {
+        setCell(ws, 'A' + row, axis.rome, { style: 'axisHeader' });
+        setCell(ws, 'B' + row, `${axis.name} (Trục ${axis.id})`, { style: 'axisHeader' });
+        row++;
+        const axisTasks = tasks.filter(t => t.axisId === axis.id);
+        axisTasks.forEach((t, idx) => {
+            setCell(ws, 'A' + row, idx + 1, { style: 'dataCenter' });
+            setCell(ws, 'B' + row, t.nhiemVu, { style: 'dataCell' });
+            setCell(ws, 'C' + row, t.capTrinh, { style: 'dataCell' });
+            setCell(ws, 'D' + row, t.doKho, { style: 'dataCell' });
+            setCell(ws, 'E' + row, t.sanPham, { style: 'dataCenter' });
+            setCell(ws, 'F' + row, t.soLuongKH, { style: 'dataCenter' });
+            setCell(ws, 'G' + row, t.tienDoKH, { style: 'dataCenter' });
+            setCell(ws, 'H' + row, t.ghiChu, { style: 'dataCell' });
+            setCell(ws, 'I' + row, parseSafeFloat(t.diemCham, 100), { style: 'dataCenter' });
+            setCell(ws, 'J' + row, parseFloat(t.heSoQD) || 1, { style: 'dataCenter', numFmt: '0.00' });
+            row++;
+        });
+    });
+
+    ws['!merges'] = merges;
+    ws['!ref'] = `A1:J${row}`;
+    ws['!cols'] = [{ wch: 6 }, { wch: 45 }, { wch: 25 }, { wch: 30 }, { wch: 20 }, { wch: 10 }, { wch: 15 }, { wch: 18 }, { wch: 18 }, { wch: 12 }];
+    return ws;
+}
+
+function buildChamDiemSheet() {
+    const ws = {};
+    const merges = [];
+    const hoTen = document.getElementById("inputHoTen").value || '';
+    const chucVu = document.getElementById("inputChucVu").value || '';
+    const donVi = document.getElementById("inputDonVi").value || '';
+    const kyDanhGia = document.getElementById("inputKyDanhGia").value || 'Quý III năm 2026';
+    const generalScoreInput = parseSafeFloat(document.getElementById("inputGeneralScore").value, 30);
+
+    setCell(ws, 'A1', 'SỞ NÔNG NGHIỆP VÀ MÔI TRƯỜNG\n', { style: 'plainCenter' }); addMerge(merges, 'A1:E1');
+    setCell(ws, 'H1', 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc', { style: 'titleBold' }); addMerge(merges, 'H1:O1');
+    setCell(ws, 'H2', 'An Giang, ngày         tháng         năm 2026', { style: 'plainCenter' }); addMerge(merges, 'H2:O2');
+    setCell(ws, 'A4', 'BẢNG TÍNH ĐIỂM CỦA CÁ NHÂN', { style: 'titleBig' }); addMerge(merges, 'A4:O4');
+    setCell(ws, 'A5', kyDanhGia, { style: 'titleBold' }); addMerge(merges, 'A5:O5');
+    setCell(ws, 'B7', 'Họ và tên:  ' + hoTen, { style: 'label' });
+    setCell(ws, 'C7', ' Ngày sinh:  ', { style: 'label' });
+    setCell(ws, 'B8', 'Chức vụ Đảng:  ', { style: 'label' });
+    setCell(ws, 'B9', 'Chức vụ chính quyền:  ' + chucVu, { style: 'label' });
+    setCell(ws, 'B10', 'Chức vụ đoàn thể:  ', { style: 'label' });
+    setCell(ws, 'B11', 'Đơn vị công tác: ' + donVi, { style: 'label' });
+
+    setCell(ws, 'A13', 'TT', { style: 'headerCell' }); addMerge(merges, 'A13:A15');
+    setCell(ws, 'B13', 'NHIỆM VỤ ĐỀ RA KẾ HOẠCH', { style: 'headerCell' }); addMerge(merges, 'B13:G13');
+    setCell(ws, 'H13', 'THỰC TẾ TRIỂN KHAI', { style: 'headerCell' }); addMerge(merges, 'H13:O13');
+
+    setCell(ws, 'B14', 'Nhiệm vụ', { style: 'headerCell' }); addMerge(merges, 'B14:B15');
+    setCell(ws, 'C14', 'Sản phẩm', { style: 'headerCell' }); addMerge(merges, 'C14:C15');
+    setCell(ws, 'D14', 'Số lượng', { style: 'headerCell' }); addMerge(merges, 'D14:D15');
+    setCell(ws, 'E14', 'Tiến độ', { style: 'headerCell' }); addMerge(merges, 'E14:E15');
+    setCell(ws, 'F14', 'Hệ số quy đổi', { style: 'headerCell' }); addMerge(merges, 'F14:F15');
+    setCell(ws, 'G14', 'Số lượng quy đổi', { style: 'headerCell' }); addMerge(merges, 'G14:G15');
+    setCell(ws, 'H14', 'KPI(Số lượng)', { style: 'headerCell' }); addMerge(merges, 'H14:I14');
+    setCell(ws, 'J14', 'KPI(Chất lượng)', { style: 'headerCell' }); addMerge(merges, 'J14:K14');
+    setCell(ws, 'L14', 'KPI C(Tiến độ)', { style: 'headerCell' }); addMerge(merges, 'L14:M14');
+    setCell(ws, 'N14', 'D. Lãnh đạo, chỉ đạo, điều hành', { style: 'headerCell' }); addMerge(merges, 'N14:O14');
+    setCell(ws, 'H15', 'Thực tế hoàn thành', { style: 'headerCell' }); setCell(ws, 'I15', 'Quy đổi', { style: 'headerCell' });
+    setCell(ws, 'J15', 'Thực tế hoàn thành', { style: 'headerCell' }); setCell(ws, 'K15', 'Quy đổi', { style: 'headerCell' });
+    setCell(ws, 'L15', 'Thực tế hoàn thành', { style: 'headerCell' }); setCell(ws, 'M15', 'Quy đổi', { style: 'headerCell' });
+    setCell(ws, 'N15', 'Thực tế hoàn thành', { style: 'headerCell' }); setCell(ws, 'O15', 'Quy đổi', { style: 'headerCell' });
+
+    let row = 16;
+    const axisSummary = []; // { id, maxScore, kpiCellRef }
+    const dataCols = ['F','G','H','I','J','K','L','M','N','O'];
+
+    AXIS_CONFIG.forEach(axis => {
+        setCell(ws, 'A' + row, axis.rome, { style: 'axisHeader' });
+        setCell(ws, 'B' + row, `${axis.name} (Trục ${axis.id})`, { style: 'axisHeader' });
+        row++;
+
+        const taskStart = row;
+        const axisTasks = tasks.filter(t => t.axisId === axis.id);
+        axisTasks.forEach((t, idx) => {
+            const r = row;
+            setCell(ws, 'A' + r, idx + 1, { style: 'dataCenter' });
+            setCell(ws, 'B' + r, t.nhiemVu, { style: 'dataCell' });
+            setCell(ws, 'C' + r, t.sanPham, { style: 'dataCenter' });
+            setCell(ws, 'D' + r, t.soLuongKH, { style: 'dataCenter' });
+            setCell(ws, 'E' + r, t.tienDoKH, { style: 'dataCenter' });
+            setCell(ws, 'F' + r, parseFloat(t.heSoQD) || 1, { style: 'dataNumber', numFmt: '0.00' });
+            // Số lượng quy đổi (G) = Hệ số quy đổi (F) — đúng công thức Mẫu 02 gốc
+            setCell(ws, 'G' + r, null, { formula: `F${r}`, style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'H' + r, parseSafeFloat(t.tt_soLuong, 1), { style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'I' + r, null, { formula: `H${r}*G${r}`, style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'J' + r, parseSafeFloat(t.tt_chatLuong, 1), { style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'K' + r, null, { formula: `J${r}*G${r}`, style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'L' + r, parseSafeFloat(t.tt_tienDo, 1), { style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'M' + r, null, { formula: `L${r}*G${r}`, style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'N' + r, parseSafeFloat(t.tt_lanhDao, 1), { style: 'dataNumber', numFmt: '0.00' });
+            setCell(ws, 'O' + r, null, { formula: `N${r}*G${r}`, style: 'dataNumber', numFmt: '0.00' });
+            row++;
+        });
+        const taskEnd = row - 1;
+
+        const sumRow = row;
+        setCell(ws, 'B' + sumRow, 'Tổng cộng', { style: 'summary' });
+        setCell(ws, 'G' + sumRow, null, { formula: `SUM(G${taskStart}:G${taskEnd})`, style: 'summaryVal', numFmt: '0.00' });
+        setCell(ws, 'I' + sumRow, null, { formula: `SUM(I${taskStart}:I${taskEnd})`, style: 'summaryVal', numFmt: '0.00' });
+        setCell(ws, 'K' + sumRow, null, { formula: `SUM(K${taskStart}:K${taskEnd})`, style: 'summaryVal', numFmt: '0.00' });
+        setCell(ws, 'M' + sumRow, null, { formula: `SUM(M${taskStart}:M${taskEnd})`, style: 'summaryVal', numFmt: '0.00' });
+        setCell(ws, 'O' + sumRow, null, { formula: `SUM(O${taskStart}:O${taskEnd})`, style: 'summaryVal', numFmt: '0.00' });
+        row++;
+
+        const rowA = row, rowB = row + 1, rowC = row + 2, rowD = row + 3;
+        setCell(ws, 'B' + rowA, 'A =', { style: 'label' }); setCell(ws, 'C' + rowA, null, { formula: `I${sumRow}/G${sumRow}`, style: 'plainCenter', numFmt: '0.0000' }); setCell(ws, 'D' + rowA, '%', { style: 'plain' });
+        setCell(ws, 'B' + rowB, 'B =', { style: 'label' }); setCell(ws, 'C' + rowB, null, { formula: `K${sumRow}/G${sumRow}`, style: 'plainCenter', numFmt: '0.0000' }); setCell(ws, 'D' + rowB, '%', { style: 'plain' });
+        setCell(ws, 'G' + rowB, '=>', { style: 'label' });
+        setCell(ws, 'H' + rowB, `KPI (trục ${axis.id}) =`, { style: 'label' }); addMerge(merges, `H${rowB}:I${rowB}`);
+        setCell(ws, 'J' + rowB, null, { formula: `(C${rowA}+C${rowB}+C${rowC}+C${rowD})/4*100`, style: 'summaryVal', numFmt: '0.00' });
+        setCell(ws, 'K' + rowB, '%', { style: 'plain' });
+        setCell(ws, 'B' + rowC, 'C =', { style: 'label' }); setCell(ws, 'C' + rowC, null, { formula: `M${sumRow}/G${sumRow}`, style: 'plainCenter', numFmt: '0.0000' }); setCell(ws, 'D' + rowC, '%', { style: 'plain' });
+        setCell(ws, 'B' + rowD, 'D =', { style: 'label' }); setCell(ws, 'C' + rowD, null, { formula: `O${sumRow}/G${sumRow}`, style: 'plainCenter', numFmt: '0.0000' }); setCell(ws, 'D' + rowD, '%', { style: 'plain' });
+
+        axisSummary.push({ id: axis.id, rome: axis.rome, maxScore: axis.maxScore, kpiCellRef: `J${rowB}` });
+
+        row = rowD + 2; // chừa 1 dòng trống giữa các trục (đúng bố cục file gốc)
+    });
+
+    // ==== BẢNG TỔNG HỢP KẾT QUẢ 6 TRỤC (formula-driven, không hard-code) ====
+    row += 1;
+    const scoreCellRefs = [];
+    axisSummary.forEach(item => {
+        setCell(ws, 'B' + row, `KPI (trục ${item.id}) =`, { style: 'label' });
+        setCell(ws, 'C' + row, null, { formula: item.kpiCellRef, style: 'plainCenter', numFmt: '0.00' });
+        setCell(ws, 'D' + row, '%', { style: 'plain' });
+        setCell(ws, 'E' + row, `Điểm đạt Trục ${item.id} = ${item.maxScore} x KPI (trục ${item.id}) =`, { style: 'label' });
+        setCell(ws, 'I' + row, null, { formula: `${item.maxScore}*C${row}/100`, style: 'summaryVal', numFmt: '0.00' });
+        scoreCellRefs.push('I' + row);
+        row++;
+    });
+
+    const totalTaskRow = row;
+    setCell(ws, 'D' + totalTaskRow, 'TỔNG ĐIỂM ĐẠT ĐƯỢC (6 TRỤC, tối đa 70 điểm):', { style: 'summary' });
+    setCell(ws, 'I' + totalTaskRow, null, { formula: `SUM(${scoreCellRefs[0]}:${scoreCellRefs[scoreCellRefs.length - 1]})`, style: 'summaryVal', numFmt: '0.00' });
+    row += 2;
+
+    const generalScoreRow = row;
+    setCell(ws, 'D' + generalScoreRow, 'ĐIỂM TIÊU CHÍ CHUNG (tối đa 30 điểm):', { style: 'summary' });
+    setCell(ws, 'I' + generalScoreRow, generalScoreInput, { style: 'summaryVal', numFmt: '0.00' });
+    row++;
+
+    const finalRow = row;
+    setCell(ws, 'D' + finalRow, 'TỔNG ĐIỂM ĐÁNH GIÁ CUỐI CÙNG (thang điểm 100):', { style: 'summary' });
+    setCell(ws, 'I' + finalRow, null, { formula: `I${generalScoreRow}+I${totalTaskRow}`, style: 'summaryVal', numFmt: '0.00' });
+    row++;
+
+    const finalPctRow = row;
+    setCell(ws, 'D' + finalPctRow, 'Tỷ lệ % hoàn thành:', { style: 'summary' });
+    setCell(ws, 'I' + finalPctRow, null, { formula: `I${finalRow}/100`, style: 'summaryVal', numFmt: '0.00%' });
+
+    ws['!merges'] = merges;
+    ws['!ref'] = `A1:O${finalPctRow + 1}`;
+    ws['!cols'] = [{ wch: 6 }, { wch: 40 }, { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 13 }, { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 10 }];
+    return ws;
+}
+
+function exportAllSheetsMau02() {
+    const wb = XLSX.utils.book_new();
+    wb.Workbook = { WBProps: { fullCalcOnLoad: true } }; // ép Excel/LibreOffice tính lại công thức khi mở file
+
+    const wsDanhMuc = buildDanhMucSheet();
+    const wsChamDiem = buildChamDiemSheet();
+
+    XLSX.utils.book_append_sheet(wb, wsDanhMuc, "danhmuc");
+    XLSX.utils.book_append_sheet(wb, wsChamDiem, "chamdiem");
+
+    const ky = (document.getElementById("inputKyDanhGia").value || 'KyDanhGia').replace(/\s+/g, '_');
+    XLSX.writeFile(wb, `Mau_so_02_AISANG_${ky}.xlsx`);
+}
+</script>
+
+</body>
+</html>
